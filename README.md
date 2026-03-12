@@ -2,8 +2,6 @@
 
 [![GitHub release](https://img.shields.io/github/v/release/kestros/kestros-test)](https://github.com/kestros/kestros-test/releases)
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 ## Overview
 
 kestros-test is a synthetic test pipeline repository used to validate the Kestros multi-agent workflow end-to-end. It exercises the full agent lifecycle, from BA scoping and Lead Developer guidelines through Developer implementation, QA review, and final Danny approval. The stories tracked on the `test` board are synthetic and do not represent real product work — they exist solely to verify that each stage of the pipeline functions correctly and that agents hand off work as expected.
@@ -46,9 +44,6 @@ kestros-test is a synthetic test pipeline repository used to validate the Kestro
    ```
 
    Replace `<password>` and the port with the values for your local instance.
-=======
-=======
->>>>>>> 237b230 (docs: add Usage Examples section to README)
 Test repository for validating the Kestros agent pipeline end-to-end.
 
 ## Configuration
@@ -94,8 +89,6 @@ Add to `pom.xml` `<properties>`:
 ```
 
 > **Note:** This repository is a pipeline validation harness. Configuration options will expand as the module evolves beyond test-harness scope.
-<<<<<<< HEAD
->>>>>>> a5de553 (docs: add Configuration section to README)
 
 ## Configuration
 
@@ -140,7 +133,6 @@ Add to `pom.xml` `<properties>`:
 ```
 
 > **Note:** This repository is a pipeline validation harness. Configuration options will expand as the module evolves beyond test-harness scope.
-=======
 
 ## Usage Examples
 
@@ -307,7 +299,6 @@ public class StoryCreationServiceTest {
     }
 }
 ```
->>>>>>> 237b230 (docs: add Usage Examples section to README)
 
 ## Usage Examples
 
@@ -474,3 +465,84 @@ public class StoryCreationServiceTest {
     }
 }
 ```
+Test repository for validating the Kestros agent pipeline end-to-end.
+
+## Contributing
+
+Contributions to `kestros-test` follow the same standards as all Kestros repositories. The guidelines below mirror the system-wide standards defined in `kestros-claude/standards/`.
+
+### Pull Request Process
+
+1. **Branch naming** — all branches must follow the convention `{agent-id}/TASK-NNN` (e.g. `dev-readme-06/TEST-026`). Feature branches created outside of the task system use `feature/short-description`.
+2. **Branch from `main`** — always create your branch from `main`. Never branch from another feature branch.
+3. **One branch per task, one PR per task** — scope each branch and PR to a single task. Do not batch multiple task IDs into a single PR.
+4. **PR title format** — use `[kestros-test] Brief description of change` (e.g. `[kestros-test] Add Contributing section to README`).
+5. **Target branch** — all PRs target `main`.
+6. **Required reviewers** — at minimum, a Lead Developer review is required before merge. QA sign-off is required before the task moves to `pending-approval`.
+7. **No AI references** — commit messages must never reference Claude, Anthropic, or any AI tool. Conventional prefixes only: `feat:`, `fix:`, `docs:`, `chore:`, `refactor:`.
+
+### Code Style
+
+- Follow the formatting conventions established in `kestros-claude/standards/`.
+- Java code uses standard Maven project structure. Keep package declarations consistent with `io.kestros.test`.
+- Commit messages use the format `[artifact-id]: action, brief result` — imperative mood, under 72 characters on the first line.
+- Do not commit build artifacts, IDE config files, or generated output. Stage only the files relevant to the change.
+- Keep scope contained: only modify files that are directly required by the task.
+
+### Testing
+
+Before submitting a PR, the following must pass locally:
+
+```bash
+mvn clean install
+```
+
+This compiles the source, runs all unit tests, and packages the bundle. A PR may not be submitted if `mvn clean install` fails.
+
+For changes that affect API endpoints or servlet behaviour, run the smoke test against your local Sling instance after deploying:
+
+```bash
+bash scripts/smoke-test.sh http://localhost:9000
+```
+
+All tests must pass. Zero failures, zero skipped. Do not submit a PR with a failing test suite.
+
+## Contributing
+
+Contributions to `kestros-test` follow the same standards as all Kestros repositories. The guidelines below mirror the system-wide standards defined in `kestros-claude/standards/`.
+
+### Pull Request Process
+
+1. **Branch naming** — all branches must follow the convention `{agent-id}/TASK-NNN` (e.g. `dev-readme-06/TEST-026`). Feature branches created outside of the task system use `feature/short-description`.
+2. **Branch from `main`** — always create your branch from `main`. Never branch from another feature branch.
+3. **One branch per task, one PR per task** — scope each branch and PR to a single task. Do not batch multiple task IDs into a single PR.
+4. **PR title format** — use `[kestros-test] Brief description of change` (e.g. `[kestros-test] Add Contributing section to README`).
+5. **Target branch** — all PRs target `main`.
+6. **Required reviewers** — at minimum, a Lead Developer review is required before merge. QA sign-off is required before the task moves to `pending-approval`.
+7. **No AI references** — commit messages must never reference Claude, Anthropic, or any AI tool. Conventional prefixes only: `feat:`, `fix:`, `docs:`, `chore:`, `refactor:`.
+
+### Code Style
+
+- Follow the formatting conventions established in `kestros-claude/standards/`.
+- Java code uses standard Maven project structure. Keep package declarations consistent with `io.kestros.test`.
+- Commit messages use the format `[artifact-id]: action, brief result` — imperative mood, under 72 characters on the first line.
+- Do not commit build artifacts, IDE config files, or generated output. Stage only the files relevant to the change.
+- Keep scope contained: only modify files that are directly required by the task.
+
+### Testing
+
+Before submitting a PR, the following must pass locally:
+
+```bash
+mvn clean install
+```
+
+This compiles the source, runs all unit tests, and packages the bundle. A PR may not be submitted if `mvn clean install` fails.
+
+For changes that affect API endpoints or servlet behaviour, run the smoke test against your local Sling instance after deploying:
+
+```bash
+bash scripts/smoke-test.sh http://localhost:9000
+```
+
+All tests must pass. Zero failures, zero skipped. Do not submit a PR with a failing test suite.
