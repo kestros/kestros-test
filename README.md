@@ -629,6 +629,17 @@ Contributions to `kestros-test` follow the same standards as all Kestros reposit
 ### Testing
 
 Before submitting a PR, the following must pass locally:
+Test repository for validating the Kestros agent pipeline end-to-end.
+
+## FAQ
+
+**Q: What is this repository for?**
+
+`kestros-test` is a synthetic test repository used to validate the Kestros multi-agent pipeline end-to-end. It does not contain production application code. Instead, it serves as a controlled environment for testing agent workflows, story lifecycle transitions, PR creation, review gates, and deployment automation. All stories created against this repo are test stories marked with `[TEST]` in their titles.
+
+**Q: How do I run the tests?**
+
+Tests are run using Maven from the repository root:
 
 ```bash
 mvn clean install
@@ -637,6 +648,7 @@ mvn clean install
 This compiles the source, runs all unit tests, and packages the bundle. A PR may not be submitted if `mvn clean install` fails.
 
 For changes that affect API endpoints or servlet behaviour, run the smoke test against your local Sling instance after deploying:
+This compiles all source, executes unit tests, and packages the bundle. For integration tests that require a running Sling instance, deploy the bundle to your local dev instance first, then run the smoke test:
 
 ```bash
 bash scripts/smoke-test.sh http://localhost:9000
@@ -1687,3 +1699,246 @@ Tests that write to a shared JCR instance (rather than an in-memory mock) do not
    ```
 
 3. If running against the shared dev instance, prefix all test content paths with a unique agent or session ID to avoid collisions with other active agents.
+All tests must pass with zero failures and zero skipped before a PR is submitted.
+
+**Q: How do I reset test data?**
+
+Test data in the shared dev instance lives under `/content/kestros-tasks/stories/TEST-NNN/`. To reset:
+
+1. Log in to the Felix Content Browser at `http://192.168.86.216:9000/system/console/jcrresolver`.
+2. Navigate to `/content/kestros-tasks/stories/`.
+3. Delete any `TEST-NNN` nodes you want to reset.
+
+Alternatively, if your test code created content programmatically, use the JCR admin API or a teardown script. Prefer `JCR_MOCK` resolvers in unit tests to avoid persisting data to the shared instance at all.
+
+**Q: How do I add new test stories?**
+
+New test stories are created via the kestros-tasks API:
+
+```bash
+curl -s -u admin:kestros-dev000 -X POST "http://192.168.86.216:9000/api/stories/create" \
+  -d "title=[TEST] My new test story&description=Description here&status=todo&board=test"
+```
+
+Use the `board=test` parameter so the story appears on the test board rather than the main product board. Follow the `[TEST]` title prefix convention so test stories are clearly identifiable and can be bulk-cleaned up later.
+
+**Q: Who do I contact with questions?**
+
+For questions about the Kestros agent pipeline, standards, or this repository, post a message in the `#kestros-dev` Slack channel or open a discussion post on the relevant story via the task board at `http://192.168.86.216:9000/ui/board.html`. For urgent issues, DM Danny directly via Slack (`@danny`). Agent-specific questions can also be filed as feedback in `kestros-claude/agent-feedback/`.
+
+**Q: Why does `main` only have an empty initial commit?**
+
+The `kestros-test` repository is built up incrementally by agents executing test stories. Each section of the README — Overview, Installation, Configuration, Usage Examples, Troubleshooting, Contributing, License, and this FAQ — is added by a separate story and PR. This mirrors the real Kestros agent workflow: each agent works on a scoped branch, opens a PR, and the changes are merged in sequence. The empty initial commit is intentional — it gives every agent branch a common base to branch from.
+
+**Q: Are there any branch or commit message rules I need to follow?**
+
+Yes. All branches must follow the pattern `{agent-id}/TASK-NNN`. Commit messages use conventional prefixes (`feat:`, `fix:`, `docs:`, `chore:`, `refactor:`) and must never reference AI tools, Claude, or Anthropic. PRs always target `main`. See the [Contributing](#contributing) section for the full PR checklist.
+
+## FAQ
+
+**Q: What is this repository for?**
+
+`kestros-test` is a synthetic test repository used to validate the Kestros multi-agent pipeline end-to-end. It does not contain production application code. Instead, it serves as a controlled environment for testing agent workflows, story lifecycle transitions, PR creation, review gates, and deployment automation. All stories created against this repo are test stories marked with `[TEST]` in their titles.
+
+**Q: How do I run the tests?**
+
+Tests are run using Maven from the repository root:
+
+```bash
+mvn clean install
+```
+
+This compiles all source, executes unit tests, and packages the bundle. For integration tests that require a running Sling instance, deploy the bundle to your local dev instance first, then run the smoke test:
+
+```bash
+bash scripts/smoke-test.sh http://localhost:9000
+```
+
+All tests must pass with zero failures and zero skipped before a PR is submitted.
+
+**Q: How do I reset test data?**
+
+Test data in the shared dev instance lives under `/content/kestros-tasks/stories/TEST-NNN/`. To reset:
+
+1. Log in to the Felix Content Browser at `http://192.168.86.216:9000/system/console/jcrresolver`.
+2. Navigate to `/content/kestros-tasks/stories/`.
+3. Delete any `TEST-NNN` nodes you want to reset.
+
+Alternatively, if your test code created content programmatically, use the JCR admin API or a teardown script. Prefer `JCR_MOCK` resolvers in unit tests to avoid persisting data to the shared instance at all.
+
+**Q: How do I add new test stories?**
+
+New test stories are created via the kestros-tasks API:
+
+```bash
+curl -s -u admin:kestros-dev000 -X POST "http://192.168.86.216:9000/api/stories/create" \
+  -d "title=[TEST] My new test story&description=Description here&status=todo&board=test"
+```
+
+Use the `board=test` parameter so the story appears on the test board rather than the main product board. Follow the `[TEST]` title prefix convention so test stories are clearly identifiable and can be bulk-cleaned up later.
+
+**Q: Who do I contact with questions?**
+
+For questions about the Kestros agent pipeline, standards, or this repository, post a message in the `#kestros-dev` Slack channel or open a discussion post on the relevant story via the task board at `http://192.168.86.216:9000/ui/board.html`. For urgent issues, DM Danny directly via Slack (`@danny`). Agent-specific questions can also be filed as feedback in `kestros-claude/agent-feedback/`.
+
+**Q: Why does `main` only have an empty initial commit?**
+
+The `kestros-test` repository is built up incrementally by agents executing test stories. Each section of the README — Overview, Installation, Configuration, Usage Examples, Troubleshooting, Contributing, License, and this FAQ — is added by a separate story and PR. This mirrors the real Kestros agent workflow: each agent works on a scoped branch, opens a PR, and the changes are merged in sequence. The empty initial commit is intentional — it gives every agent branch a common base to branch from.
+
+**Q: Are there any branch or commit message rules I need to follow?**
+
+Yes. All branches must follow the pattern `{agent-id}/TASK-NNN`. Commit messages use conventional prefixes (`feat:`, `fix:`, `docs:`, `chore:`, `refactor:`) and must never reference AI tools, Claude, or Anthropic. PRs always target `main`. See the [Contributing](#contributing) section for the full PR checklist.
+
+## FAQ
+
+**Q: What is this repository for?**
+
+`kestros-test` is a synthetic test repository used to validate the Kestros multi-agent pipeline end-to-end. It does not contain production application code. Instead, it serves as a controlled environment for testing agent workflows, story lifecycle transitions, PR creation, review gates, and deployment automation. All stories created against this repo are test stories marked with `[TEST]` in their titles.
+
+**Q: How do I run the tests?**
+
+Tests are run using Maven from the repository root:
+
+```bash
+mvn clean install
+```
+
+This compiles the source, runs all unit tests, and packages the bundle. A PR may not be submitted if `mvn clean install` fails.
+
+For changes that affect API endpoints or servlet behaviour, run the smoke test against your local Sling instance after deploying:
+This compiles all source, executes unit tests, and packages the bundle. For integration tests that require a running Sling instance, deploy the bundle to your local dev instance first, then run the smoke test:
+
+```bash
+bash scripts/smoke-test.sh http://localhost:9000
+```
+
+All tests must pass. Zero failures, zero skipped. Do not submit a PR with a failing test suite.
+
+## Contributing
+
+Contributions to `kestros-test` follow the same standards as all Kestros repositories. The guidelines below mirror the system-wide standards defined in `kestros-claude/standards/`.
+
+### Pull Request Process
+
+1. **Branch naming** — all branches must follow the convention `{agent-id}/TASK-NNN` (e.g. `dev-readme-06/TEST-026`). Feature branches created outside of the task system use `feature/short-description`.
+2. **Branch from `main`** — always create your branch from `main`. Never branch from another feature branch.
+3. **One branch per task, one PR per task** — scope each branch and PR to a single task. Do not batch multiple task IDs into a single PR.
+4. **PR title format** — use `[kestros-test] Brief description of change` (e.g. `[kestros-test] Add Contributing section to README`).
+5. **Target branch** — all PRs target `main`.
+6. **Required reviewers** — at minimum, a Lead Developer review is required before merge. QA sign-off is required before the task moves to `pending-approval`.
+7. **No AI references** — commit messages must never reference Claude, Anthropic, or any AI tool. Conventional prefixes only: `feat:`, `fix:`, `docs:`, `chore:`, `refactor:`.
+
+### Code Style
+
+- Follow the formatting conventions established in `kestros-claude/standards/`.
+- Java code uses standard Maven project structure. Keep package declarations consistent with `io.kestros.test`.
+- Commit messages use the format `[artifact-id]: action, brief result` — imperative mood, under 72 characters on the first line.
+- Do not commit build artifacts, IDE config files, or generated output. Stage only the files relevant to the change.
+- Keep scope contained: only modify files that are directly required by the task.
+
+### Testing
+
+Before submitting a PR, the following must pass locally:
+
+```bash
+mvn clean install
+```
+
+This compiles the source, runs all unit tests, and packages the bundle. A PR may not be submitted if `mvn clean install` fails.
+
+For changes that affect API endpoints or servlet behaviour, run the smoke test against your local Sling instance after deploying:
+
+```bash
+bash scripts/smoke-test.sh http://localhost:9000
+```
+
+All tests must pass. Zero failures, zero skipped. Do not submit a PR with a failing test suite.
+All tests must pass with zero failures and zero skipped before a PR is submitted.
+
+**Q: How do I reset test data?**
+
+Test data in the shared dev instance lives under `/content/kestros-tasks/stories/TEST-NNN/`. To reset:
+
+1. Log in to the Felix Content Browser at `http://192.168.86.216:9000/system/console/jcrresolver`.
+2. Navigate to `/content/kestros-tasks/stories/`.
+3. Delete any `TEST-NNN` nodes you want to reset.
+
+Alternatively, if your test code created content programmatically, use the JCR admin API or a teardown script. Prefer `JCR_MOCK` resolvers in unit tests to avoid persisting data to the shared instance at all.
+
+**Q: How do I add new test stories?**
+
+New test stories are created via the kestros-tasks API:
+
+```bash
+curl -s -u admin:kestros-dev000 -X POST "http://192.168.86.216:9000/api/stories/create" \
+  -d "title=[TEST] My new test story&description=Description here&status=todo&board=test"
+```
+
+Use the `board=test` parameter so the story appears on the test board rather than the main product board. Follow the `[TEST]` title prefix convention so test stories are clearly identifiable and can be bulk-cleaned up later.
+
+**Q: Who do I contact with questions?**
+
+For questions about the Kestros agent pipeline, standards, or this repository, post a message in the `#kestros-dev` Slack channel or open a discussion post on the relevant story via the task board at `http://192.168.86.216:9000/ui/board.html`. For urgent issues, DM Danny directly via Slack (`@danny`). Agent-specific questions can also be filed as feedback in `kestros-claude/agent-feedback/`.
+
+**Q: Why does `main` only have an empty initial commit?**
+
+The `kestros-test` repository is built up incrementally by agents executing test stories. Each section of the README — Overview, Installation, Configuration, Usage Examples, Troubleshooting, Contributing, License, and this FAQ — is added by a separate story and PR. This mirrors the real Kestros agent workflow: each agent works on a scoped branch, opens a PR, and the changes are merged in sequence. The empty initial commit is intentional — it gives every agent branch a common base to branch from.
+
+**Q: Are there any branch or commit message rules I need to follow?**
+
+Yes. All branches must follow the pattern `{agent-id}/TASK-NNN`. Commit messages use conventional prefixes (`feat:`, `fix:`, `docs:`, `chore:`, `refactor:`) and must never reference AI tools, Claude, or Anthropic. PRs always target `main`. See the [Contributing](#contributing) section for the full PR checklist.
+
+## FAQ
+
+**Q: What is this repository for?**
+
+`kestros-test` is a synthetic test repository used to validate the Kestros multi-agent pipeline end-to-end. It does not contain production application code. Instead, it serves as a controlled environment for testing agent workflows, story lifecycle transitions, PR creation, review gates, and deployment automation. All stories created against this repo are test stories marked with `[TEST]` in their titles.
+
+**Q: How do I run the tests?**
+
+Tests are run using Maven from the repository root:
+
+```bash
+mvn clean install
+```
+
+This compiles all source, executes unit tests, and packages the bundle. For integration tests that require a running Sling instance, deploy the bundle to your local dev instance first, then run the smoke test:
+
+```bash
+bash scripts/smoke-test.sh http://localhost:9000
+```
+
+All tests must pass with zero failures and zero skipped before a PR is submitted.
+
+**Q: How do I reset test data?**
+
+Test data in the shared dev instance lives under `/content/kestros-tasks/stories/TEST-NNN/`. To reset:
+
+1. Log in to the Felix Content Browser at `http://192.168.86.216:9000/system/console/jcrresolver`.
+2. Navigate to `/content/kestros-tasks/stories/`.
+3. Delete any `TEST-NNN` nodes you want to reset.
+
+Alternatively, if your test code created content programmatically, use the JCR admin API or a teardown script. Prefer `JCR_MOCK` resolvers in unit tests to avoid persisting data to the shared instance at all.
+
+**Q: How do I add new test stories?**
+
+New test stories are created via the kestros-tasks API:
+
+```bash
+curl -s -u admin:kestros-dev000 -X POST "http://192.168.86.216:9000/api/stories/create" \
+  -d "title=[TEST] My new test story&description=Description here&status=todo&board=test"
+```
+
+Use the `board=test` parameter so the story appears on the test board rather than the main product board. Follow the `[TEST]` title prefix convention so test stories are clearly identifiable and can be bulk-cleaned up later.
+
+**Q: Who do I contact with questions?**
+
+For questions about the Kestros agent pipeline, standards, or this repository, post a message in the `#kestros-dev` Slack channel or open a discussion post on the relevant story via the task board at `http://192.168.86.216:9000/ui/board.html`. For urgent issues, DM Danny directly via Slack (`@danny`). Agent-specific questions can also be filed as feedback in `kestros-claude/agent-feedback/`.
+
+**Q: Why does `main` only have an empty initial commit?**
+
+The `kestros-test` repository is built up incrementally by agents executing test stories. Each section of the README — Overview, Installation, Configuration, Usage Examples, Troubleshooting, Contributing, License, and this FAQ — is added by a separate story and PR. This mirrors the real Kestros agent workflow: each agent works on a scoped branch, opens a PR, and the changes are merged in sequence. The empty initial commit is intentional — it gives every agent branch a common base to branch from.
+
+**Q: Are there any branch or commit message rules I need to follow?**
+
+Yes. All branches must follow the pattern `{agent-id}/TASK-NNN`. Commit messages use conventional prefixes (`feat:`, `fix:`, `docs:`, `chore:`, `refactor:`) and must never reference AI tools, Claude, or Anthropic. PRs always target `main`. See the [Contributing](#contributing) section for the full PR checklist.
