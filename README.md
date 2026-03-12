@@ -546,3 +546,14 @@ bash scripts/smoke-test.sh http://localhost:9000
 ```
 
 All tests must pass. Zero failures, zero skipped. Do not submit a PR with a failing test suite.
+## License
+
+This project is licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+
+Copyright © 2024 Kestros
+
+## License
+
+This project is licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+
+Copyright © 2024 Kestros
